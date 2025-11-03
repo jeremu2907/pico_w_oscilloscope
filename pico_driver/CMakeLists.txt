@@ -22,8 +22,6 @@ set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
 if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
-# ====================================================================================
-set(PICO_BOARD pico_w CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
@@ -41,6 +39,15 @@ add_executable(Main
     main.cpp
 )
 
+# ====================================================================================
+set(PICO_BOARD pico_w CACHE STRING "Board type")
+if(PICO_BOARD STREQUAL "pico_w")
+    # target_sources(${PROJECT_NAME} PRIVATE bluetooth.cpp)
+    message(STATUS "Building Bluetooth module for Pico W")
+    target_compile_definitions(Main PRIVATE ENABLE_BLUETOOTH)
+endif()
+# ====================================================================================
+
 include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/Shared/includes
 )
@@ -55,10 +62,14 @@ pico_enable_stdio_usb(Main 1)
 # Add the standard library to the build
 target_link_libraries(
     Main
+    PRIVATE
     Shared
     pico_stdlib
-    pico_cyw43_arch_none
 )
+
+if(PICO_BOARD STREQUAL "pico_w")
+    target_link_libraries(Main PRIVATE pico_cyw43_arch_none)
+endif()
 
 # Add the standard include files to the build
 target_include_directories(Main PRIVATE
