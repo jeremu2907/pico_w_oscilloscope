@@ -7,23 +7,19 @@ import time
 # -----------------------------
 # CONFIGURATION
 # -----------------------------
-USB_PORT = '/dev/cu.usbmodem1101'  # replace with your port
+USB_PORT = '/dev/cu.usbmodem1101'
 BAUDRATE = 115200
 HISTORY_SECONDS = 300
 GUI_WINDOW_SECONDS = 20
-UPDATE_INTERVAL_MS = 50  # 1 ms is too fast; 50 ms is smoother
-MAX_POINTS = 10000  # reasonable cap to avoid memory explosion
+UPDATE_INTERVAL_MS = 50
+MAX_POINTS = 10000
 
-# -----------------------------
 # DATA STORAGE
-# -----------------------------
 times = deque(maxlen=MAX_POINTS)
 voltages = deque(maxlen=MAX_POINTS)
 start_time = time.time()
 
-# -----------------------------
 # SETUP PLOT
-# -----------------------------
 plt.style.use('dark_background')
 fig, ax = plt.subplots()
 line, = ax.plot([], [], color='yellow', lw=1.8)
@@ -42,9 +38,7 @@ def toggle_live(event):
 
 fig.canvas.mpl_connect('key_press_event', toggle_live)
 
-# -----------------------------
 # SERIAL CONNECTION HELPER
-# -----------------------------
 def try_connect():
     """Try to open the serial port, return None if unavailable."""
     try:
@@ -57,13 +51,10 @@ def try_connect():
 
 ser = try_connect()
 
-# -----------------------------
 # UPDATE FUNCTION
-# -----------------------------
 def update(frame):
     global ser
 
-    # If serial not connected, try again
     if ser is None or not ser.is_open:
         ser = try_connect()
         return line,
@@ -89,7 +80,6 @@ def update(frame):
     if not times:
         return line,
 
-    # Update line
     line.set_data(times, voltages)
 
     if auto_scroll:
@@ -101,8 +91,6 @@ def update(frame):
 
     return line,
 
-# -----------------------------
 # ANIMATION
-# -----------------------------
 ani = animation.FuncAnimation(fig, update, interval=UPDATE_INTERVAL_MS, blit=False)
 plt.show()

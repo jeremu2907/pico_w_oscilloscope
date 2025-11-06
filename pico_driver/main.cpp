@@ -18,7 +18,7 @@ int main()
     gp26A0.installCallback(
         [](float voltage)
         {
-            printf("%f\n", voltage * 3.0 + ((voltage > 0.01)? 0.2 : 0.0));
+            printf("%f\n", voltage * 3.0 + ((voltage > 0.05)? 0.2 : 0.0));
         }
     );
 
