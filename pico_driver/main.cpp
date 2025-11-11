@@ -18,7 +18,10 @@ int main()
     gp26A0.installCallback(
         [](float voltage)
         {
-            printf("%f\n", voltage * 3.0 + ((voltage > 0.05)? 0.2 : 0.0));
+            const float DIODE_V_DROP_ONE_WAY = .209;
+            const float TOTAL_DIODE_DROP = DIODE_V_DROP_ONE_WAY * 2.0;
+            const float MIN_SIGNAL = 0.05;
+            printf("%f\n", voltage * 3.0 + ((voltage > MIN_SIGNAL)? TOTAL_DIODE_DROP : 0.0));
         }
     );
 
